@@ -2,7 +2,7 @@ import dayjs from 'dayjs';
 import {createDateTemplate} from './event-components.js';
 
 const createIconTemplate = (type) => `<div class="event__type">
-      <img class="event__type-icon" width="42" height="42" src="img/icons/${type.toLoverCase()}.png" alt="Event ${type} icon">
+      <img class="event__type-icon" width="42" height="42" src="img/icons/${type.toLowerCase()}.png" alt="Event ${type} icon">
     </div>`;
 
 const createTitleTemplate = (type, destination) => {
