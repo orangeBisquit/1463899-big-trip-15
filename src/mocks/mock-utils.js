@@ -2,10 +2,10 @@ import {
   getRandomInteger,
   getRandomSentence,
   getRandomArrayItem
-} from '../utils.js';
+} from '../utils/utils.js';
 import dayjs from 'dayjs';
 
-import { WAYPOINT_TYPES} from './mock-data.js';
+import { WAYPOINT_TYPES} from './mock-const.js';
 
 // Тип
 const generateEventType = () => getRandomArrayItem(WAYPOINT_TYPES);

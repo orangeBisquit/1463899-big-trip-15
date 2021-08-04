@@ -2,9 +2,9 @@ import {
   getRandomInteger,
   getRandomSentence,
   getRandomArrayItem
-} from '../utils.js';
+} from '../utils/utils.js';
 import {generateEventType, generateOffers, generatePhotos} from './mock-utils.js';
-import { DESTINATIONS } from './mock-data.js';
+import { DESTINATIONS } from './mock-const.js';
 import { generateDateFrom, generateDateTo } from './mock-utils.js';
 
 // Путнк назначения

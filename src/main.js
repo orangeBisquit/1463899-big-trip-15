@@ -7,10 +7,10 @@ import { createEventsListTemplate } from './view/content.js';
 import { createEventTemplate } from './view/events.js';
 import { createNewEventTemplate } from './view/new-event.js';
 import { createEditEventTemplate } from './view/edit-event.js';
-import { generateEvent } from './model/mock-event.js';
-import { generateNewEvent } from './model/mock-new-event.js';
-import { sortByDate } from './model/sort-by-day.js';
-import { calculatePrice } from './model/calculate-price.js';
+import { generateEvent } from './mocks/mock-event.js';
+import { generateNewEvent } from './mocks/mock-new-event.js';
+import { sortByDate } from './utils/sort-by-day.js';
+import { calculatePrice } from './utils/calculate-price.js';
 
 const WAYPOINT_COUNT = 20;
 

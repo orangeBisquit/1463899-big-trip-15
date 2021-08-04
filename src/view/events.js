@@ -1,47 +1,17 @@
 import dayjs from 'dayjs';
-import {createDateTemplate} from './event-components.js';
+import {createDateTemplate} from './new-n-edit-event-components.js';
+import { humanizeRouteMessage, humanizeDuration } from './../utils/utils.js';
 
-const createIconTemplate = (type) => `<div class="event__type">
+const createIconTemplate = (type) => (
+  `<div class="event__type">
       <img class="event__type-icon" width="42" height="42" src="img/icons/${type.toLowerCase()}.png" alt="Event ${type} icon">
-    </div>`;
+  </div>`
+);
 
 const createTitleTemplate = (type, destination) => {
-  let titleMessage = `${type} in ${destination}`;
-
-  switch (type) {
-    case 'Taxi':
-    case 'Bus':
-    case 'Train':
-    case 'Drive':
-    case 'Flight':
-      titleMessage = `${type} to ${destination}`;
-      break;
-    case 'Check-in':
-      titleMessage = `${type} ${destination}`;
-      break;
-    default:
-      titleMessage = `${type} in ${destination}`;
-  }
+  const titleMessage = humanizeRouteMessage(type, destination);
 
   return `<h3 class="event__title">${titleMessage}</h3>`;
-};
-
-const getHumanizedDuration = (duration) => {
-  let delta = duration;
-
-  const days = Math.floor(delta / 1440);
-  delta -= days * 1440;
-  const humanizedDays = days > 0 ? `${days}D ` : '';
-
-  const hours = Math.floor(delta / 60) % 24;
-  delta -= hours * 60;
-  const humanizedHours = hours > 0 ? `${hours}H ` : '';
-
-  const humanizedMinutes = `${delta}M`;
-
-  const humanizedDuration = `${humanizedDays}${humanizedHours}${humanizedMinutes}`;
-
-  return humanizedDuration;
 };
 
 const createScheduleTemplate = (dateFrom, dateTo) => {
@@ -55,26 +25,23 @@ const createScheduleTemplate = (dateFrom, dateTo) => {
                     &mdash;
         <time class="event__end-time" datetime="${dateTo}">${timeTo}</time>
       </p>
-      <p class="event__duration">${getHumanizedDuration(duration)}</p>
+      <p class="event__duration">${humanizeDuration(duration)}</p>
     </div>`;
 };
 
 const createOffersTemplate = (offers) => {
-  let offersTemplate = '';
 
-  offers.forEach((offer) => {
-    const { title, price } = offer;
+  const offerItems = offers.map((offer) => (
+    `<li class="event__offer">
+      <span class="event__offer-title">${offer.title}</span>
+        &plus;&euro;&nbsp;
+      <span class="event__offer-price">${offer.price}</span>
+    </li>`
+  ));
 
-    const offerTemplate = `<li class="event__offer">
-        <span class="event__offer-title">${title}</span>
-                    &plus;&euro;&nbsp;
-        <span class="event__offer-price">${price}</span>
-        </li>`;
-
-    offersTemplate += offerTemplate;
-  });
-
-  return offersTemplate;
+  return `<ul class="event__selected-offers">
+            ${offerItems.join('\n')}
+          </ul>`;
 };
 
 const createFavoriteTemplate = (isFavorite) => {
@@ -90,7 +57,6 @@ const createFavoriteTemplate = (isFavorite) => {
         </button>`;
 };
 
-
 export const createEventTemplate = (event) => {
   const {
     dateFrom,
@@ -102,28 +68,21 @@ export const createEventTemplate = (event) => {
     isFavorite,
   } = event;
 
-  // console.log("FROM: " + dateFrom, "TO: " + dateTo);
-
   return `<li class="trip-events__item">
     <div class="event">
-      <time class="event__date" datetime="${dateFrom}">${createDateTemplate(
-  dateFrom,
-  'MMM D',
-)}</time>
-    ${createIconTemplate(type)}
-    ${createTitleTemplate(type, destination)}
-    ${createScheduleTemplate(dateFrom, dateTo)}
+      <time class="event__date" datetime="${dateFrom}">${createDateTemplate(dateFrom,'MMM D')}</time>
+      ${createIconTemplate(type)}
+      ${createTitleTemplate(type, destination)}
+      ${createScheduleTemplate(dateFrom, dateTo)}
       <p class="event__price">
                   &euro;&nbsp;<span class="event__price-value">${basePrice}</span>
       </p>
       <h4 class="visually-hidden">Offers:</h4>
-      <ul class="event__selected-offers">
-        ${createOffersTemplate(offers)}
-      </ul>
-        ${createFavoriteTemplate(isFavorite)}
-        <button class="event__rollup-btn" type="button">
-          <span class="visually-hidden">Open event</span>
-        </button>
+      ${createOffersTemplate(offers)}
+      ${createFavoriteTemplate(isFavorite)}
+      <button class="event__rollup-btn" type="button">
+        <span class="visually-hidden">Open event</span>
+      </button>
     </div>
   </li>`;
 };

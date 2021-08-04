@@ -1,4 +1,4 @@
-import { getRandomInteger, getRandomSentence } from '../utils.js';
+import { getRandomInteger, getRandomSentence } from '../utils/utils.js';
 import dayjs from 'dayjs';
 import {
   generateEventType,

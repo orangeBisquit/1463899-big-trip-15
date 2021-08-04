@@ -1,7 +1,7 @@
 import {
   createDateTemplate,
-  createOffersTemplate
-} from './event-components.js';
+  createOffersSelection
+} from './new-n-edit-event-components.js';
 
 export const createEditEventTemplate = (event) => {
   const { dateFrom, dateTo, basePrice, destination: {name: destination}, type, offers, destination: {description} } = event;
@@ -116,10 +116,7 @@ export const createEditEventTemplate = (event) => {
                 <section class="event__details">
                   <section class="event__section  event__section--offers">
                     <h3 class="event__section-title  event__section-title--offers">Offers</h3>
-
-                    <div class="event__available-offers">
-                      ${createOffersTemplate(offers)}
-                    </div>
+                    ${createOffersSelection(offers)}
                   </section>
 
                   <section class="event__section  event__section--destination">
