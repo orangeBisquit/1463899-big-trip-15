@@ -65,4 +65,10 @@ const humanizeDuration = (duration) => {
   return humanizedDuration;
 };
 
-export { getRandomInteger, getRandomArrayItem, getRandomSentence, humanizeRouteMessage, humanizeDuration };
+const isEscPress = (evt) => {
+  if (evt.keyCode === 27 || evt.key === 'Escape' || evt.key === 'Escape') {
+    return true;
+  }
+};
+
+export { getRandomInteger, getRandomArrayItem, getRandomSentence, humanizeRouteMessage, humanizeDuration, isEscPress };

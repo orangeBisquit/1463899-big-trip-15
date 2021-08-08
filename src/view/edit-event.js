@@ -1,9 +1,11 @@
 import {
   createDateTemplate,
   createOffersSelection
-} from './new-n-edit-event-components.js';
+} from './event-components.js';
 
-export const createEditEventTemplate = (event) => {
+import { createElement } from '../utils/common';
+
+const createEditEvent = (event) => {
   const { dateFrom, dateTo, basePrice, destination: {name: destination}, type, offers, destination: {description} } = event;
 
   return `<li class="trip-events__item">
@@ -127,3 +129,26 @@ export const createEditEventTemplate = (event) => {
               </form>
             </li>`;
 };
+
+export default class EditEvent {
+  constructor(event) {
+    this._event = event;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createEditEvent(this._event);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

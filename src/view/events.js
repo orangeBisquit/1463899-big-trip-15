@@ -1,6 +1,7 @@
 import dayjs from 'dayjs';
-import {createDateTemplate} from './new-n-edit-event-components.js';
+import {createDateTemplate} from './event-components.js';
 import { humanizeRouteMessage, humanizeDuration } from './../utils/utils.js';
+import { createElement } from '../utils/common';
 
 const createIconTemplate = (type) => (
   `<div class="event__type">
@@ -29,20 +30,16 @@ const createScheduleTemplate = (dateFrom, dateTo) => {
     </div>`;
 };
 
-const createOffersTemplate = (offers) => {
-
-  const offerItems = offers.map((offer) => (
+const createOffersTemplate = (offers) => (
+  `<ul class="event__selected-offers">
+    ${offers.map((offer) => (
     `<li class="event__offer">
       <span class="event__offer-title">${offer.title}</span>
         &plus;&euro;&nbsp;
       <span class="event__offer-price">${offer.price}</span>
-    </li>`
-  ));
-
-  return `<ul class="event__selected-offers">
-            ${offerItems.join('\n')}
-          </ul>`;
-};
+    </li>`)).join('\n')}
+  </ul>`
+);
 
 const createFavoriteTemplate = (isFavorite) => {
   const isFavoriteClass = isFavorite
@@ -57,7 +54,7 @@ const createFavoriteTemplate = (isFavorite) => {
         </button>`;
 };
 
-export const createEventTemplate = (event) => {
+const createEvent = (event) => {
   const {
     dateFrom,
     dateTo,
@@ -86,3 +83,26 @@ export const createEventTemplate = (event) => {
     </div>
   </li>`;
 };
+
+export default class Event {
+  constructor(event) {
+    this._event = event;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createEvent(this._event);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
