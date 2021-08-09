@@ -1,21 +1,46 @@
 import {
   createDateTemplate,
   createOffersSelection
-} from './new-n-edit-event-components.js';
+} from './event-components.js';
+import { createElement } from '../utils/common';
+import { getRandomInteger, getRandomSentence } from '../utils/utils.js';
+import dayjs from 'dayjs';
+import {
+  generateEventType,
+  generateOffers,
+  generatePhotos
+} from '../mocks/mock-utils.js';
 
-const createPhotosTemplate = (photos) => {
-  const photosTemplate = photos.map((photo) => (
-    `<img class="event__photo" src="${photo.src}" alt="${photo.description}">`
-  ));
+const createPhotosTemplate = (photos) => (
+  `<div class="event__photos-container">
+    <div class="event__photos-tape">
+    ${photos.map((photo) => (
+    `<img class="event__photo" src="${photo.src}" alt="${photo.description}">`)).join('\n')}
+    </div>
+  </div>`
+);
 
-  return `<div class="event__photos-container">
-            <div class="event__photos-tape">
-              ${photosTemplate}
-            </div>
-          </div>`;
+const generateNewEvent = () => {
+  const dateFrom = dayjs();
+  const dateTo = '';
+
+  return {
+    basePrice: 0,
+    dateFrom: dateFrom,
+    dateTo: dateTo,
+    destination: {
+      description: getRandomSentence(30),
+      name: '',
+      pictures: generatePhotos(),
+    },
+    id: getRandomInteger(0, 9999),
+    isFavorite: '',
+    offers: generateOffers(6),
+    type: generateEventType(),
+  };
 };
 
-export const createNewEventTemplate = (event) => {
+export const createNewEvent = (event) => {
   const {
     dateFrom,
     basePrice,
@@ -137,3 +162,26 @@ export const createNewEventTemplate = (event) => {
         </form>
       </li>`;
 };
+
+export default class NewEvent {
+  constructor(event = generateNewEvent()) {
+    this._event = event;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createNewEvent(this._event);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

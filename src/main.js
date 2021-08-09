@@ -1,56 +1,118 @@
-import { createEventTempalte } from './view/route.js';
-import { createPriceTempalte } from './view/price.js';
-import { createMenuTemplate } from './view/menu.js';
-import { createFiltersTemplate } from './view/filter.js';
-import { createSortTemplate } from './view/sort.js';
-import { createEventsListTemplate } from './view/content.js';
-import { createEventTemplate } from './view/events.js';
-import { createNewEventTemplate } from './view/new-event.js';
-import { createEditEventTemplate } from './view/edit-event.js';
+import RouteView from './view/route.js';
+import PriceView from './view/price.js';
+import MainMenuView from './view/menu.js';
+import FiltersView from './view/filter.js';
+import SortView from './view/sort.js';
+import EventsListView from './view/events-list.js';
+import EventView from './view/events.js';
+import NewEventView from './view/new-event.js';
+import EditEventView from './view/edit-event.js';
 import { generateEvent } from './mocks/mock-event.js';
-import { generateNewEvent } from './mocks/mock-new-event.js';
-import { sortByDate } from './utils/sort-by-day.js';
-import { calculatePrice } from './utils/calculate-price.js';
+import { renderElement, RenderPosition } from './utils/common.js';
+import { getRandomInteger, isEscPress } from './utils/utils.js';
+import EmptyListView from './view/empty-list.js';
 
-const WAYPOINT_COUNT = 20;
+const WAYPOINT_COUNT = getRandomInteger(0, 2);
 
 const routeElement = document.querySelector('.trip-main');
 const menuElement = document.querySelector('.trip-controls__navigation');
 const filterElement = document.querySelector('.trip-controls__filters');
 const eventsElement = document.querySelector('.trip-events');
-
-const render = (container, template, place) => {
-  container.insertAdjacentHTML(place, template);
-};
+const newEventButton = document.querySelector('.trip-main__event-add-btn');
 
 // Генерация Объектов
 const events = new Array(WAYPOINT_COUNT).fill(' ').map(generateEvent);
 
-// Сортировка объектов по дате
-const sortedEvents = sortByDate(events);
+// Функции рендера
+const renderEvent = (eventsList, event) => {
+  const eventComponent = new EventView(event);
+  const editEventComponent = new EditEventView(event);
 
-// Получение общей суммы поездки
-const priceTotal = calculatePrice(events);
+  const showEditEvent = () => {
+    eventsList.replaceChild(editEventComponent.getElement(), eventComponent.getElement());
+  };
 
-// Отрисовка страницы
-render(
-  routeElement,
-  createEventTempalte(sortedEvents),
-  'afterbegin',
-);
-render(menuElement, createMenuTemplate(), 'beforeend');
-render(filterElement, createFiltersTemplate(), 'beforeend');
-render(eventsElement, createSortTemplate(), 'beforeend');
-render(eventsElement, createEventsListTemplate(), 'beforeend');
+  const hideEditEvent = () => {
+    eventsList.replaceChild(eventComponent.getElement(), editEventComponent.getElement());
+  };
 
-const tripInfoElement = document.querySelector('.trip-info');
-render(tripInfoElement, createPriceTempalte(priceTotal), 'beforeend');
+  eventComponent.getElement().querySelector('.event__rollup-btn').addEventListener('click', () => {
+    showEditEvent();
+  });
+
+  editEventComponent.getElement().querySelector('.event__rollup-btn').addEventListener('click', () => {
+    hideEditEvent();
+  });
+
+  editEventComponent.getElement().querySelector('.event__reset-btn').addEventListener('click', () => {
+    hideEditEvent();
+    eventsList.removeChild(eventComponent.getElement());
+    eventComponent.removeElement();
+    editEventComponent.removeElement();
+  });
+
+  document.addEventListener('keydown', (evt) => {
+    if (isEscPress(evt)) {
+      hideEditEvent();
+    }
+  });
+
+  editEventComponent.getElement().querySelector('.event__save-btn').addEventListener('click', () => {
+    hideEditEvent();
+  });
+
+  renderElement(eventsList, eventComponent.getElement(), RenderPosition.BEFOREEND);
+};
+
+const updateTripInfo = (allEvents) => {
+
+  if (allEvents.children.length > 0) {
+    renderElement(routeElement, new RouteView(events).getElement(), RenderPosition.AFTERBEGIN);
+
+    const tripInfoElement = document.querySelector('.trip-info');
+
+    renderElement(tripInfoElement, new PriceView(events).getElement(), RenderPosition.BEFOREEND);
+  } else {
+    renderElement(eventsElement, new EmptyListView().getElement(), RenderPosition.BEFOREEND);
+  }
+};
+
+const createNewEvent = (eventsList) => {
+  const newEventComponent = new NewEventView();
+
+  const closeNewEvent = () => {
+    eventsList.removeChild(newEventComponent.getElement());
+  };
+
+  newEventComponent.getElement().querySelector('.event__save-btn').addEventListener('click', () => {
+    closeNewEvent();
+  });
+
+  newEventComponent.getElement().querySelector('.event__reset-btn').addEventListener('click', () => {
+    closeNewEvent();
+  });
+
+  renderElement(eventsList, newEventComponent.getElement(), RenderPosition.AFTERBEGIN);
+};
+
+const renderUI = () => {
+  renderElement(menuElement, new MainMenuView().getElement(), RenderPosition.BEFOREEND);
+  renderElement(filterElement, new FiltersView().getElement(), RenderPosition.BEFOREEND);
+  renderElement(eventsElement, new SortView().getElement(), RenderPosition.AFTERBEGIN);
+  renderElement(eventsElement, new EventsListView().getElement(), RenderPosition.BEFOREEND);
+};
+// Рендер интерфейса
+renderUI();
 
 const contentElement = document.querySelector('.trip-events__list');
-render(contentElement, createEditEventTemplate(events[0]), 'afterbegin');
-render(contentElement, createNewEventTemplate(generateNewEvent()), 'afterbegin');
 
 for (let i = 0; i < events.length; i++) {
-  render(contentElement, createEventTemplate(events[i]), 'beforeend');
+  renderEvent(contentElement, events[i]);
 }
+
+updateTripInfo(contentElement);
+
+newEventButton.addEventListener('click', () => {
+  createNewEvent(contentElement);
+});
 

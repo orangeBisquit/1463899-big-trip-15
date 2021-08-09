@@ -1,4 +1,6 @@
-import {createDateTemplate} from './new-n-edit-event-components.js';
+import {createDateTemplate} from './event-components.js';
+import { sortByDate } from '../utils/common.js';
+import { createElement } from '../utils/common';
 
 // Отрисовка начального и конечного пункта в меню
 const showStartEndEvents = (sortedEvents) => {
@@ -18,10 +20,33 @@ const showStartEndEvents = (sortedEvents) => {
           <p class="trip-info__dates">${routeDates}</p>`;
 };
 
-export const createEventTempalte = (sortedEvents) => (
+const createRoute = (sortedEvents) => (
   `<section class="trip-main__trip-info  trip-info">
     <div class="trip-info__main">
       ${showStartEndEvents(sortedEvents)}
     </div>
   </section>`
 );
+
+export default class Route {
+  constructor(events) {
+    this._events = sortByDate(events);
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createRoute(this._events);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
