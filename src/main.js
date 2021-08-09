@@ -11,7 +11,7 @@ import { generateEvent } from './mocks/mock-event.js';
 import { renderElement, RenderPosition } from './utils/common.js';
 import { getRandomInteger, isEscPress } from './utils/utils.js';
 import EmptyListView from './view/empty-list.js';
-
+// Для второго задания
 const WAYPOINT_COUNT = getRandomInteger(0, 2);
 
 const routeElement = document.querySelector('.trip-main');
