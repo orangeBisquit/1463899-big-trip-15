@@ -1,8 +1,3 @@
-const RenderPosition = {
-  AFTERGEBIN: 'afterbegin',
-  BEFOREEND: 'beforeend',
-};
-
 const sortByDate = (events) => {
   const eventsByDay = events.slice().sort((a, b) => a.dateFrom - b.dateFrom);
 
@@ -26,22 +21,11 @@ const calculatePrice = (events) => {
   return priceTotal;
 };
 
-const renderElement = (container, element, place) => {
-  switch (place) {
-    case RenderPosition.AFTERBEGIN:
-      container.prepend(element);
-      break;
-    case RenderPosition.BEFOREEND:
-      container.append(element);
-      break;
+const isEscPress = (evt) => {
+  if (evt.keyCode === 27 || evt.key === 'Escape' || evt.key === 'Escape') {
+    return true;
   }
 };
 
-const createElement = (template) => {
-  const newElement = document.createElement('div');
-  newElement.innerHTML = template;
-  return newElement.firstChild;
-};
-
-export { sortByDate, calculatePrice, RenderPosition, renderElement, createElement};
+export { sortByDate, calculatePrice, isEscPress};
 

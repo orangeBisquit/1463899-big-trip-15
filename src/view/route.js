@@ -1,6 +1,6 @@
+import AbstractView from './abstract.js';
 import {createDateTemplate} from './event-components.js';
 import { sortByDate } from '../utils/common.js';
-import { createElement } from '../utils/common';
 
 // Отрисовка начального и конечного пункта в меню
 const showStartEndEvents = (sortedEvents) => {
@@ -28,25 +28,13 @@ const createRoute = (sortedEvents) => (
   </section>`
 );
 
-export default class Route {
+export default class Route extends AbstractView {
   constructor(events) {
+    super();
     this._events = sortByDate(events);
-    this._element = null;
   }
 
   getTemplate() {
     return createRoute(this._events);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

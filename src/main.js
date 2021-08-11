@@ -8,10 +8,11 @@ import EventView from './view/events.js';
 import NewEventView from './view/new-event.js';
 import EditEventView from './view/edit-event.js';
 import { generateEvent } from './mocks/mock-event.js';
-import { renderElement, RenderPosition } from './utils/common.js';
-import { getRandomInteger, isEscPress } from './utils/utils.js';
+import { render, replace, remove, RenderPosition } from './utils/render.js';
+import { getRandomInteger } from './utils/utils.js';
+import { isEscPress } from './utils/common.js';
 import EmptyListView from './view/empty-list.js';
-// Для второго задания
+
 const WAYPOINT_COUNT = getRandomInteger(0, 2);
 
 const routeElement = document.querySelector('.trip-main');
@@ -29,77 +30,78 @@ const renderEvent = (eventsList, event) => {
   const editEventComponent = new EditEventView(event);
 
   const showEditEvent = () => {
-    eventsList.replaceChild(editEventComponent.getElement(), eventComponent.getElement());
+    replace(editEventComponent, eventComponent);
   };
 
   const hideEditEvent = () => {
-    eventsList.replaceChild(eventComponent.getElement(), editEventComponent.getElement());
+    replace(eventComponent, editEventComponent);
   };
 
-  eventComponent.getElement().querySelector('.event__rollup-btn').addEventListener('click', () => {
-    showEditEvent();
-  });
-
-  editEventComponent.getElement().querySelector('.event__rollup-btn').addEventListener('click', () => {
-    hideEditEvent();
-  });
-
-  editEventComponent.getElement().querySelector('.event__reset-btn').addEventListener('click', () => {
-    hideEditEvent();
-    eventsList.removeChild(eventComponent.getElement());
-    eventComponent.removeElement();
-    editEventComponent.removeElement();
-  });
-
-  document.addEventListener('keydown', (evt) => {
+  const onEscKeyDown = (evt) => {
+    evt.preventDefault();
     if (isEscPress(evt)) {
       hideEditEvent();
+      document.removeEventListener('keydown', onEscKeyDown);
     }
+  };
+
+  eventComponent.setOpenEditHandler(() => {
+    showEditEvent();
+    document.addEventListener('keydown', onEscKeyDown);
   });
 
-  editEventComponent.getElement().querySelector('.event__save-btn').addEventListener('click', () => {
+  editEventComponent.setCloseEditHandler(() => {
     hideEditEvent();
+    document.removeEventListener('keydown', onEscKeyDown);
   });
 
-  renderElement(eventsList, eventComponent.getElement(), RenderPosition.BEFOREEND);
+  render(eventsList, eventComponent, RenderPosition.BEFOREEND);
 };
-
+// EXTRA
 const updateTripInfo = (allEvents) => {
 
   if (allEvents.children.length > 0) {
-    renderElement(routeElement, new RouteView(events).getElement(), RenderPosition.AFTERBEGIN);
+    render(routeElement, new RouteView(events), RenderPosition.AFTERBEGIN);
 
     const tripInfoElement = document.querySelector('.trip-info');
 
-    renderElement(tripInfoElement, new PriceView(events).getElement(), RenderPosition.BEFOREEND);
+    render(tripInfoElement, new PriceView(events), RenderPosition.BEFOREEND);
   } else {
-    renderElement(eventsElement, new EmptyListView().getElement(), RenderPosition.BEFOREEND);
+    render(eventsElement, new EmptyListView(), RenderPosition.BEFOREEND);
   }
 };
+// ---
 
 const createNewEvent = (eventsList) => {
   const newEventComponent = new NewEventView();
 
   const closeNewEvent = () => {
-    eventsList.removeChild(newEventComponent.getElement());
+    remove(newEventComponent);
   };
 
-  newEventComponent.getElement().querySelector('.event__save-btn').addEventListener('click', () => {
+  const onEscKeyDown = (evt) => {
+    evt.preventDefault();
+    if (isEscPress(evt)) {
+      closeNewEvent();
+      document.removeEventListener('keydown', onEscKeyDown);
+    }
+  };
+
+  document.addEventListener('keydown', onEscKeyDown);
+
+  newEventComponent.setCloseNewHandler(() => {
     closeNewEvent();
+    document.removeEventListener('keydown', onEscKeyDown);
   });
 
-  newEventComponent.getElement().querySelector('.event__reset-btn').addEventListener('click', () => {
-    closeNewEvent();
-  });
-
-  renderElement(eventsList, newEventComponent.getElement(), RenderPosition.AFTERBEGIN);
+  render(eventsList, newEventComponent, RenderPosition.AFTERBEGIN);
 };
 
 const renderUI = () => {
-  renderElement(menuElement, new MainMenuView().getElement(), RenderPosition.BEFOREEND);
-  renderElement(filterElement, new FiltersView().getElement(), RenderPosition.BEFOREEND);
-  renderElement(eventsElement, new SortView().getElement(), RenderPosition.AFTERBEGIN);
-  renderElement(eventsElement, new EventsListView().getElement(), RenderPosition.BEFOREEND);
+  render(menuElement, new MainMenuView(), RenderPosition.BEFOREEND);
+  render(filterElement, new FiltersView(), RenderPosition.BEFOREEND);
+  render(eventsElement, new SortView(), RenderPosition.AFTERBEGIN);
+  render(eventsElement, new EventsListView(), RenderPosition.BEFOREEND);
 };
 // Рендер интерфейса
 renderUI();
