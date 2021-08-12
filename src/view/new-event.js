@@ -1,8 +1,8 @@
+import AbstractView from './abstract.js';
 import {
   createDateTemplate,
   createOffersSelection
 } from './event-components.js';
-import { createElement } from '../utils/common';
 import { getRandomInteger, getRandomSentence } from '../utils/utils.js';
 import dayjs from 'dayjs';
 import {
@@ -40,7 +40,7 @@ const generateNewEvent = () => {
   };
 };
 
-export const createNewEvent = (event) => {
+const createNewEvent = (event) => {
   const {
     dateFrom,
     basePrice,
@@ -163,25 +163,28 @@ export const createNewEvent = (event) => {
       </li>`;
 };
 
-export default class NewEvent {
+export default class NewEvent extends AbstractView {
   constructor(event = generateNewEvent()) {
+    super();
     this._event = event;
-    this._element = null;
+
+    this._closeNewHandler = this._closeNewHandler.bind(this);
   }
 
   getTemplate() {
     return createNewEvent(this._event);
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
+  _closeNewHandler(evt) {
+    evt.preventDefault();
+    this._callback.closeNew();
   }
 
-  removeElement() {
-    this._element = null;
+  setCloseNewHandler(callback) {
+    this._callback.closeNew = callback;
+    this.getElement().querySelector('.event__save-btn').addEventListener('click', this._closeNewHandler);
+    // Extra
+    this.getElement().querySelector('.event__reset-btn').addEventListener('click', this._closeNewHandler);
+    // ---
   }
 }

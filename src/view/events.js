@@ -1,7 +1,7 @@
+import AbstractView from './abstract.js';
 import dayjs from 'dayjs';
 import {createDateTemplate} from './event-components.js';
 import { humanizeRouteMessage, humanizeDuration } from './../utils/utils.js';
-import { createElement } from '../utils/common';
 
 const createIconTemplate = (type) => (
   `<div class="event__type">
@@ -84,25 +84,25 @@ const createEvent = (event) => {
   </li>`;
 };
 
-export default class Event {
+export default class Event extends AbstractView {
   constructor(event) {
+    super();
     this._event = event;
-    this._element = null;
+
+    this._openEditHandler = this._openEditHandler.bind(this);
   }
 
   getTemplate() {
     return createEvent(this._event);
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
+  _openEditHandler(evt) {
+    evt.preventDefault();
+    this._callback.openEdit();
   }
 
-  removeElement() {
-    this._element = null;
+  setOpenEditHandler(callback) {
+    this._callback.openEdit = callback;
+    this.getElement().querySelector('.event__rollup-btn').addEventListener('click', this._openEditHandler);
   }
 }

@@ -2,8 +2,7 @@ import {
   createDateTemplate,
   createOffersSelection
 } from './event-components.js';
-
-import { createElement } from '../utils/common';
+import AbstractView from './abstract.js';
 
 const createEditEvent = (event) => {
   const { dateFrom, dateTo, basePrice, destination: {name: destination}, type, offers, destination: {description} } = event;
@@ -130,25 +129,28 @@ const createEditEvent = (event) => {
             </li>`;
 };
 
-export default class EditEvent {
+export default class EditEvent extends AbstractView {
   constructor(event) {
+    super();
     this._event = event;
-    this._element = null;
+
+    this._closeEditHandler = this._closeEditHandler.bind(this);
   }
 
   getTemplate() {
     return createEditEvent(this._event);
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
+  _closeEditHandler(evt) {
+    evt.preventDefault();
+    this._callback.closeEdit();
   }
 
-  removeElement() {
-    this._element = null;
+  setCloseEditHandler(callback) {
+    this._callback.closeEdit = callback;
+    this.getElement().querySelector('.event__rollup-btn').addEventListener('click', this._closeEditHandler);
+    // Extra
+    this.getElement().querySelector('.event__save-btn').addEventListener('click', this._closeEditHandler);
+    // ---
   }
 }
