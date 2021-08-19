@@ -8,14 +8,15 @@ import EmptyListView from '../view/empty-list.js';
 import PointPresenter from './point.js';
 import PointNewPresenter from './point-new.js';
 import { render, RenderPosition } from '../utils/render.js';
-import { updateItem } from '../utils/common.js';
-
+import { updateItem, sortDateDown, sortDurationDown, sortPriceDown } from '../utils/common.js';
+import { SortType } from '../utils/const.js';
 export default class Trip {
   constructor(routeBoard, eventsBoard) {
     // TODO: Переедет в Route
     this._routeBoard = routeBoard;
     this._eventsBoard = eventsBoard;
     this._eventPresenter = new Map();
+    this._currentSortType = SortType.DEFAULT;
 
     this._mainMenuComponent = new MainMenuView();
     this._filterComponent = new FilterView();
@@ -25,10 +26,13 @@ export default class Trip {
 
     this._handleEventChange = this._handleEventChange.bind(this);
     this._handleModeChange = this._handleModeChange.bind(this);
+    this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
   }
 
   init(events) {
-    this._events = events.slice();
+    // FIXME: Не уверен что так правильно показывать изначальную сортировку по дате (добавил .sort(sortDateDown))
+    this._events = events.slice().sort(sortDateDown);
+    this._sourcedEvents = events.slice().sort(sortDateDown);
 
     render(this._eventsBoard, this._eventsListComponent, RenderPosition.BEFOREEND);
 
@@ -46,6 +50,7 @@ export default class Trip {
 
   _handleEventChange(updatedEvent) {
     this._events = updateItem(this._events, updatedEvent);
+    this._sourcedEvents = updateItem(this._sourcedEvents, updatedEvent);
     this._eventPresenter.get(updatedEvent.id).init(updatedEvent);
   }
 
@@ -61,6 +66,34 @@ export default class Trip {
 
   _renderSort() {
     render(this._eventsBoard, this._sortComponent, RenderPosition.AFTERBEGIN);
+    this._sortComponent.setSortTypeChangeHandler(this._handleSortTypeChange);
+  }
+
+  _sortEvents(sortType) {
+    switch (sortType) {
+      case SortType.DEFAULT:
+        this._events.sort(sortDateDown);
+        break;
+      case SortType.DURATION_DOWN:
+        this._events.sort(sortDurationDown);
+        break;
+      case SortType.PRICE_DOWN:
+        this._events.sort(sortPriceDown);
+        break;
+      default:
+        this._events = this._sourcedEvents.slice();
+    }
+
+    this._currentSortType = sortType;
+  }
+
+  _handleSortTypeChange(sortType) {
+    if (this._currentSortType === sortType) {
+      return;
+    }
+    this._sortEvents(sortType);
+    this._clearAllEvents();
+    this._renderAllEvents();
   }
 
   // TODO: Подумать что сюда поместить

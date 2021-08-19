@@ -1,3 +1,5 @@
+import dayjs from 'dayjs';
+// FIXME: Переписать функция по техзаданию (начала первого, окончание последнего), связать с презентором чтобы слушать изменения ивентов
 const sortByDate = (events) => {
   const eventsByDay = events.slice().sort((a, b) => a.dateFrom - b.dateFrom);
 
@@ -40,6 +42,15 @@ const updateItem = (items, update) => {
     ...items.slice(index + 1),
   ];
 };
+// Сортировка точек маршрута
+const getEventDuration = (start, end) => dayjs(start).diff(dayjs(end));
 
-export { sortByDate, calculatePrice, isEscPress, updateItem};
+const sortDateDown = (eventA, eventB) => eventA.dateFrom - eventB.dateFrom;
+
+const sortDurationDown = (eventA, eventB) => getEventDuration(eventA.dateFrom, eventA.dateTo) - getEventDuration(eventB.dateFrom, eventB.dateTo);
+
+const sortPriceDown = (eventA, eventB) => eventB.basePrice - eventA.basePrice;
+
+
+export { sortByDate, calculatePrice, isEscPress, updateItem, sortDateDown, sortDurationDown, sortPriceDown};
 
