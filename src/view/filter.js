@@ -20,7 +20,7 @@ const createFiltersTemplate = () => (
   </form>`
 );
 
-export default class Filters extends AbstractView {
+export default class Filter extends AbstractView {
   getTemplate() {
     return createFiltersTemplate();
   }

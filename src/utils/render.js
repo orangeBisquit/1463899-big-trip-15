@@ -29,6 +29,7 @@ const render = (container, child, place) => {
 };
 
 const replace = (newChild, oldChild) => {
+
   if (newChild instanceof Abstract) {
     newChild = newChild.getElement();
   }

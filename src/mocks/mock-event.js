@@ -6,6 +6,7 @@ import {
 import {generateEventType, generateOffers, generatePhotos} from './mock-utils.js';
 import { DESTINATIONS } from './mock-const.js';
 import { generateDateFrom, generateDateTo } from './mock-utils.js';
+import { nanoid } from 'nanoid';
 
 // Путнк назначения
 const generateDestination = () => getRandomArrayItem(DESTINATIONS);
@@ -24,7 +25,7 @@ const generateEvent = () => {
       name: generateDestination(),
       pictures: generatePhotos(),
     },
-    id: getRandomInteger(0, 9999),
+    id: nanoid(),
     isFavorite: Boolean(getRandomInteger(0, 1)),
     offers: generateOffers(3),
     type: generateEventType(),
