@@ -40,7 +40,7 @@ export default class Trip {
     this._renderAllEvents();
     // TODO: Перенесу в презентер Route когда появятся данные
     this._renderTripInfo();
-    // FIXME: Перепроверить реализацию
+    // FIXME: Перепроверить реализацию /
     this._bindEventNewListener();
   }
 
