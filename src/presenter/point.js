@@ -2,18 +2,14 @@ import EventView from '../view/event.js';
 import EventEditView from '../view/event-edit.js';
 import { render, replace, RenderPosition, remove } from '../utils/render.js';
 import { isEscPress } from '../utils/common.js';
-
-const Mode = {
-  DEFAULT: 'DEFAULT',
-  EDITING: 'EDITING',
-};
+import { offers, destinations } from '../mocks/real-data.js';
+import { Mode } from '../utils/const.js';
 
 export default class Point {
   constructor(eventsListContainer, handleEventChange, changeMode) {
     this._eventsListContainer = eventsListContainer;
     this._changeData = handleEventChange;
     this._changeMode = changeMode;
-
     this._eventComponent = null;
     this._eventEditComponent = null;
     this._mode = Mode.DEFAULT;
@@ -30,7 +26,7 @@ export default class Point {
     const prevEventEditComponent = this._eventEditComponent;
 
     this._eventComponent = new EventView(event);
-    this._eventEditComponent = new EventEditView(event);
+    this._eventEditComponent = new EventEditView(event, offers, destinations);
 
     this._eventComponent.setOpenEditHandler(this._handleOpenEditClick);
     this._eventEditComponent.setCloseEditHandler(this._handleHideEditClick);
@@ -78,8 +74,8 @@ export default class Point {
   }
 
   _escKeyDownHandler(evt) {
-    evt.preventDefault();
     if (isEscPress(evt)) {
+      evt.preventDefault();
       this._hideEditEvent();
       document.removeEventListener('keydown', this._escKeyDownHandler);
     }
@@ -90,10 +86,11 @@ export default class Point {
   }
 
   _handleHideEditClick() {
+    // TODO: Когда появится сохрание - перенести вызов в правильное место
+    this._eventEditComponent.reset(this._event);
     this._hideEditEvent();
   }
 
-  // TODO: Разобраться как работает
   _handleFavoriteClick() {
     this._changeData(
       Object.assign(

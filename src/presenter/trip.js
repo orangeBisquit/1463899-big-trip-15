@@ -12,13 +12,15 @@ import { updateItem, sortDateDown, sortDurationDown, sortPriceDown } from '../ut
 import { SortType } from '../utils/const.js';
 export default class Trip {
   constructor(routeBoard, eventsBoard) {
-    // TODO: Переедет в Route
+    // TODO: Переедет в Route presenter
     this._routeBoard = routeBoard;
     this._eventsBoard = eventsBoard;
     this._eventPresenter = new Map();
+    this._eventNewPresenter = null;
     this._currentSortType = SortType.DEFAULT;
 
     this._mainMenuComponent = new MainMenuView();
+    // TODO: Переедет в Filter presenter
     this._filterComponent = new FilterView();
     this._sortComponent = new SortView();
     this._eventsListComponent = new EventsListView();
@@ -30,7 +32,7 @@ export default class Trip {
   }
 
   init(events) {
-    // FIXME: Не уверен что так правильно показывать изначальную сортировку по дате (добавил .sort(sortDateDown))
+    // FIXME: Уберу когда будут данные
     this._events = events.slice().sort(sortDateDown);
     this._sourcedEvents = events.slice().sort(sortDateDown);
 
@@ -40,12 +42,14 @@ export default class Trip {
     this._renderAllEvents();
     // TODO: Перенесу в презентер Route когда появятся данные
     this._renderTripInfo();
-    // FIXME: Перепроверить реализацию /
-    this._bindEventNewListener();
+    this._setEventNewListener();
   }
 
   _handleModeChange() {
     this._eventPresenter.forEach((presenter) => presenter.resetView());
+    if (this._eventNewPresenter) {
+      this._eventNewPresenter.resetView();
+    }
   }
 
   _handleEventChange(updatedEvent) {
@@ -146,12 +150,13 @@ export default class Trip {
   }
 
   _renderNewEvent() {
+    this._handleModeChange();
     const eventNewPresenter = new PointNewPresenter(this._eventsListComponent);
     eventNewPresenter.init();
+    this._eventNewPresenter = eventNewPresenter;
   }
 
-  // FIXME: Перепроверить реализацию, добавить esc
-  _bindEventNewListener() {
+  _setEventNewListener() {
     const newEventButton = this._routeBoard.querySelector('.trip-main__event-add-btn');
 
     newEventButton.addEventListener('click', () => {

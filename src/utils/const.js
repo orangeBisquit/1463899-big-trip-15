@@ -4,4 +4,9 @@ const SortType = {
   DURATION_DOWN: 'duration-down',
 };
 
-export { SortType };
+const Mode = {
+  DEFAULT: 'DEFAULT',
+  EDITING: 'EDITING',
+};
+
+export { SortType, Mode };
