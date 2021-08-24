@@ -3,7 +3,7 @@ import { getRandomInteger } from './utils/utils.js';
 import TripPresenter from './presenter/trip.js';
 
 // TODO: Удалить когда будет не нужно
-const WAYPOINT_COUNT = getRandomInteger(20, 20);
+const WAYPOINT_COUNT = getRandomInteger(6, 15);
 
 const routeElement = document.querySelector('.trip-main');
 const eventsElement = document.querySelector('.trip-events');

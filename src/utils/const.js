@@ -9,4 +9,10 @@ const Mode = {
   EDITING: 'EDITING',
 };
 
-export { SortType, Mode };
+const FLATPICKER_SETUP = {
+  dateFormat: 'd/m/y H:i',
+  ['time_24hr']: true,
+  enableTime: true,
+};
+
+export { SortType, Mode, FLATPICKER_SETUP };

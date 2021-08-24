@@ -5,9 +5,8 @@ import { offers, destinations } from '../mocks/real-data.js';
 import { Mode } from '../utils/const.js';
 
 export default class PointNew {
-  constructor(eventsListContainer, changeMode) {
+  constructor(eventsListContainer) {
     this._eventsListContainer = eventsListContainer;
-    this._changeMode = changeMode;
 
     this._eventNewComponent = null;
 

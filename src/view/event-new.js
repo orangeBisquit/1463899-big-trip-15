@@ -4,30 +4,15 @@ import {
   getOffers,
   createOffersSelection,
   getDescription,
-  createDestinationsList
+  createDestinationsList,
+  getPhotos,
+  createDestination,
+  createTypes
 } from './event-components.js';
 import dayjs from 'dayjs';
 import { nanoid } from 'nanoid';
 import flatpickr from 'flatpickr';
-
-const getPhotos = (evt, destinations) => {
-  const dest = destinations.find((item) => item.name === evt.target.value);
-  return dest && dest.pictures ? dest.pictures : null;
-};
-
-const createPhotosTemplate = (photos) => photos ? `<div class="event__photos-container">
-    <div class="event__photos-tape">
-    ${photos.map((photo) => (
-    `<img class="event__photo" src="${photo.src}" alt="${photo.description}">`))
-    .join('\n')}
-    </div>
-  </div>` : '';
-
-const createDestination = (description, photos) => description && photos ?`<section class="event__section  event__section--destination">
-            <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-            <p class="event__destination-description">${description}</p>
-              ${createPhotosTemplate(photos)}
-          </section>` : '';
+import { FLATPICKER_SETUP } from '../utils/const.js';
 
 const generateNewEvent = () => {
   const dateFrom = dayjs();
@@ -64,14 +49,13 @@ const generateNewEvent = () => {
   };
 };
 
-const createNewEvent = (event, allOffers, destinations) => {
+const createNewEvent = (event, availableOffers, destinations) => {
   const {
     dateFrom,
     dateTo,
     basePrice,
-    offers,
     destination: {description},
-    destination: { name: destName },
+    destination: { name: destination },
     destination: { pictures: photos},
     type,
   } = event;
@@ -89,56 +73,7 @@ const createNewEvent = (event, allOffers, destinations) => {
                   <div class="event__type-list">
                     <fieldset class="event__type-group">
                       <legend class="visually-hidden">Event type</legend>
-
-                      <div class="event__type-item">
-                        <input id="event-type-taxi-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="taxi">
-                        <label class="event__type-label  event__type-label--taxi" for="event-type-taxi-1">Taxi</label>
-                      </div>
-
-                      <div class="event__type-item">
-                        <input id="event-type-bus-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="bus">
-                        <label class="event__type-label  event__type-label--bus" for="event-type-bus-1">Bus</label>
-                      </div>
-
-                      <div class="event__type-item">
-                        <input id="event-type-train-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="train">
-                        <label class="event__type-label  event__type-label--train" for="event-type-train-1">Train</label>
-                      </div>
-
-                      <div class="event__type-item">
-                        <input id="event-type-ship-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="ship">
-                        <label class="event__type-label  event__type-label--ship" for="event-type-ship-1">Ship</label>
-                      </div>
-
-                      <div class="event__type-item">
-                        <input id="event-type-transport-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="transport">
-                        <label class="event__type-label  event__type-label--transport" for="event-type-transport-1">Transport</label>
-                      </div>
-
-                      <div class="event__type-item">
-                        <input id="event-type-drive-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="drive">
-                        <label class="event__type-label  event__type-label--drive" for="event-type-drive-1">Drive</label>
-                      </div>
-
-                      <div class="event__type-item">
-                        <input id="event-type-flight-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="flight" checked>
-                        <label class="event__type-label  event__type-label--flight" for="event-type-flight-1">Flight</label>
-                      </div>
-
-                      <div class="event__type-item">
-                        <input id="event-type-check-in-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="check-in">
-                        <label class="event__type-label  event__type-label--check-in" for="event-type-check-in-1">Check-in</label>
-                      </div>
-
-                      <div class="event__type-item">
-                        <input id="event-type-sightseeing-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="sightseeing">
-                        <label class="event__type-label  event__type-label--sightseeing" for="event-type-sightseeing-1">Sightseeing</label>
-                      </div>
-
-                      <div class="event__type-item">
-                          <input id="event-type-restaurant-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="restaurant">
-                        <label class="event__type-label  event__type-label--restaurant" for="event-type-restaurant-1">Restaurant</label>
-                      </div>
+                      ${createTypes(availableOffers, type)}
                     </fieldset>
                   </div>
                 </div>
@@ -147,7 +82,7 @@ const createNewEvent = (event, allOffers, destinations) => {
                   <label class="event__label  event__type-output" for="event-destination-1">
                       ${type}
                     </label>
-                  <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destName}" list="destination-list-1">
+                  <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destination}" list="destination-list-1">
                   ${createDestinationsList(destinations)}
                 </div>
 
@@ -171,7 +106,7 @@ const createNewEvent = (event, allOffers, destinations) => {
                 <button class="event__reset-btn" type="reset">Cancel</button>
               </header>
             <section class="event__details">
-            ${createOffersSelection(offers)}
+            ${createOffersSelection(availableOffers, type)}
             ${createDestination(description, photos)}
           </section>
         </form>
@@ -203,6 +138,7 @@ export default class EventNew extends SmartView {
 
   _closeNewHandler(evt) {
     evt.preventDefault();
+    this._destroyPickers();
     this._callback.closeNew();
   }
 
@@ -229,6 +165,7 @@ export default class EventNew extends SmartView {
     const allOffers = this._offers;
     this.updateData({
       type: evt.target.value,
+      // FIXME: Исправить когда появятся данные
       offers: getOffers(evt, allOffers),
     });
   }
@@ -269,13 +206,13 @@ export default class EventNew extends SmartView {
 
     this._flatpickrStart = flatpickr(
       this.getElement().querySelector('#event-start-time-1'),
-      {
-        dateFormat: 'd/m/y H:i',
-        defaultDate: this._data.dueDate,
-        onChange: this._dateFromChangeHandler,
-        ['time_24hr']: true,
-        enableTime: true,
-      },
+      Object.assign(
+        {},
+        FLATPICKER_SETUP,
+        {
+          onChange: this._dateFromChangeHandler,
+        },
+      ),
     );
   }
 
@@ -288,15 +225,23 @@ export default class EventNew extends SmartView {
 
     this._flatpickrEnd = flatpickr(
       this.getElement().querySelector('#event-end-time-1'),
-      {
-        dateFormat: 'd/m/y H:i',
-        defaultDate: this._data.dueDate,
-        onChange: this._dateToChangeHandler,
-        minDate: eventStartDate,
-        ['time_24hr']: true,
-        enableTime: true,
-      },
+      Object.assign(
+        {},
+        FLATPICKER_SETUP,
+        {
+          onChange: this._dateToChangeHandler,
+          minDate: eventStartDate,
+        },
+      ),
     );
+  }
+
+  _destroyPickers() {
+    this._flatpickrStart.destroy();
+    this._flatpickrStart = null;
+
+    this._flatpickrEnd.destroy();
+    this._flatpickrEnd = null;
   }
 
   restoreHandlers() {
@@ -304,10 +249,10 @@ export default class EventNew extends SmartView {
     this.setCloseNewHandler(this._callback.closeNew);
   }
 
-  static parseEventToData(task) {
+  static parseEventToData(event) {
     return Object.assign(
       {},
-      task,
+      event,
     );
   }
 

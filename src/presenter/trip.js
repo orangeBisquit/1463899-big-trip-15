@@ -145,8 +145,12 @@ export default class Trip {
   }
 
   _clearAllEvents() {
+    this._eventPresenter.forEach((presenter) => {
+      presenter._eventEditComponent.destroyPickers();
+    });
     this._eventPresenter.forEach((presenter) => presenter.destroy());
     this._eventPresenter.clear();
+
   }
 
   _renderNewEvent() {
