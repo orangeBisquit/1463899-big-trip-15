@@ -1,7 +1,6 @@
 import AbstractView from './abstract.js';
-import {createDateTemplate} from './event-components.js';
 import { sortByDate } from '../utils/common.js';
-
+import { createDateTemplate } from '../utils/utils.js';
 // Отрисовка начального и конечного пункта в меню
 const showStartEndEvents = (sortedEvents) => {
   const startEventName = sortedEvents[0].destination.name;

@@ -50,6 +50,7 @@ export default class Point {
   }
 
   destroy() {
+    this._eventEditComponent.destroyPickers();
     remove(this._eventComponent);
     remove(this._eventEditComponent);
   }
