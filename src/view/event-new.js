@@ -52,8 +52,6 @@ const createDestinationsList = (destinations) => (
   </datalist>`
 );
 
-const createDescription = (description) => description ? description : '';
-
 const getPhotos = (evt, destinations) => {
   const dest = destinations.find((item) => item.name === evt.target.value);
   return dest && dest.pictures ? dest.pictures : null;
@@ -62,7 +60,7 @@ const getPhotos = (evt, destinations) => {
 const createPhotos = (photos) => photos ? `<div class="event__photos-container">
     <div class="event__photos-tape">
     ${photos.map((photo) => (
-  `<img class="event__photo" src="${photo.src}" alt="${photo.description}">`))
+    `<img class="event__photo" src="${photo.src}" alt="${photo.description}">`))
     .join('\n')}
     </div>
   </div>` : '';
