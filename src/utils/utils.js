@@ -1,4 +1,7 @@
 import { sentencesTemplate } from '../mocks/mock-const.js';
+import dayjs from 'dayjs';
+
+const createDateTemplate = (dateFrom, format) => dayjs(dateFrom).format(format);
 
 const getRandomInteger = (a = 0, b = 1) => {
   const lower = Math.ceil(Math.min(a, b));
@@ -65,4 +68,4 @@ const humanizeDuration = (duration) => {
   return humanizedDuration;
 };
 
-export { getRandomInteger, getRandomArrayItem, getRandomSentence, humanizeRouteMessage, humanizeDuration };
+export { createDateTemplate, getRandomInteger, getRandomArrayItem, getRandomSentence, humanizeRouteMessage, humanizeDuration };

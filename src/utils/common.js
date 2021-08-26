@@ -1,4 +1,7 @@
 import dayjs from 'dayjs';
+
+const capitalizeFirstLetter = (string) => string.charAt(0).toUpperCase() + string.slice(1);
+
 // FIXME: Переписать функция по техзаданию (начала первого, окончание последнего), связать с презентором чтобы слушать изменения ивентов
 const sortByDate = (events) => {
   const eventsByDay = events.slice().sort((a, b) => a.dateFrom - b.dateFrom);
@@ -52,5 +55,5 @@ const sortDurationDown = (eventA, eventB) => getEventDuration(eventA.dateFrom, e
 const sortPriceDown = (eventA, eventB) => eventB.basePrice - eventA.basePrice;
 
 
-export { sortByDate, calculatePrice, isEscPress, updateItem, sortDateDown, sortDurationDown, sortPriceDown};
+export { capitalizeFirstLetter, sortByDate, calculatePrice, isEscPress, updateItem, sortDateDown, sortDurationDown, sortPriceDown};
 

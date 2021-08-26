@@ -1,6 +1,6 @@
 import AbstractView from './abstract.js';
 import dayjs from 'dayjs';
-import {createDateTemplate} from './event-components.js';
+import { createDateTemplate } from '../utils/utils.js';
 import { humanizeRouteMessage, humanizeDuration } from '../utils/utils.js';
 
 const createIconTemplate = (type) => (
