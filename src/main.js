@@ -10,7 +10,6 @@ import MainMenuView from './view/menu.js';
 import { remove, render, RenderPosition } from './utils/render.js';
 import StatisticsView from './view/statistics.js';
 
-// TODO: Удалить когда будет не нужно
 const WAYPOINT_COUNT = getRandomInteger(10, 20);
 
 const routeElement = document.querySelector('.trip-main');
