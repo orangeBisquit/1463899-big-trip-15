@@ -64,8 +64,16 @@ const humanizeDuration = (duration) => {
   const humanizedMinutes = `${delta}M`;
 
   const humanizedDuration = `${humanizedDays}${humanizedHours}${humanizedMinutes}`;
-
   return humanizedDuration;
 };
 
-export { createDateTemplate, getRandomInteger, getRandomArrayItem, getRandomSentence, humanizeRouteMessage, humanizeDuration };
+const handlePseudo = (remove) => {
+  const pseudo = document.querySelector('.page-body__page-main').querySelector('.page-body__container');
+  if ( remove ) {
+    pseudo.classList.add('page-body__container--hidden-pseudo');
+  } else {
+    pseudo.classList.remove('page-body__container--hidden-pseudo');
+  }
+};
+
+export { createDateTemplate, getRandomInteger, getRandomArrayItem, getRandomSentence, humanizeRouteMessage, humanizeDuration, handlePseudo };

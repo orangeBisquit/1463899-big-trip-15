@@ -7,10 +7,8 @@ import dayjs from 'dayjs';
 
 import { WAYPOINT_TYPES} from './mock-const.js';
 
-// Тип
 const generateEventType = () => getRandomArrayItem(WAYPOINT_TYPES);
 
-// Опции
 const generateOffers = (max) => {
   const offersCount = getRandomInteger(1, max);
   const offers = [];
@@ -27,7 +25,6 @@ const generateOffers = (max) => {
   return offers;
 };
 
-// Фотографии
 const generatePhotos = () => {
   const minPhotoCount = 1;
   const maxPhotoCount = 10;
@@ -47,7 +44,6 @@ const generatePhotos = () => {
   return photos;
 };
 
-// Даты
 const generateDateFrom = () => {
   const maxDaysGap = 5;
   const maxMinutesGap = 60;

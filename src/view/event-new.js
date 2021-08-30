@@ -1,12 +1,11 @@
 import SmartView from './smart.js';
-
 import dayjs from 'dayjs';
 import { nanoid } from 'nanoid';
 import flatpickr from 'flatpickr';
 import { FLATPICKER_SETUP } from '../utils/const.js';
 import { capitalizeFirstLetter } from '../utils/common.js';
-const createDateTemplate = (dateFrom, format) => dayjs(dateFrom).format(format);
 
+const createDateTemplate = (dateFrom, format) => dayjs(dateFrom).format(format);
 
 const getOffers = (evt, offers) => {
   const type = offers.find((item) => item.type === evt.target.value);
@@ -189,6 +188,8 @@ export default class EventNew extends SmartView {
     this._flatpickrEnd = null;
 
     this._closeNewHandler = this._closeNewHandler.bind(this);
+    this._eventSaveHandler = this._eventSaveHandler.bind(this);
+
     this._destChangeHandler = this._destChangeHandler.bind(this);
     this._typeChangeHandler = this._typeChangeHandler.bind(this);
     this._priceChangeHandler = this._priceChangeHandler.bind(this);
@@ -210,10 +211,17 @@ export default class EventNew extends SmartView {
 
   setCloseNewHandler(callback) {
     this._callback.closeNew = callback;
-    this.getElement().querySelector('.event__save-btn').addEventListener('click', this._closeNewHandler);
-    // Extra
     this.getElement().querySelector('.event__reset-btn').addEventListener('click', this._closeNewHandler);
-    // ---
+  }
+
+  _eventSaveHandler(evt) {
+    evt.preventDefault();
+    this._callback.saveEvent(EventNew.parseDataToEvent(this._data));
+  }
+
+  setEventSaveHandler(callback) {
+    this._callback.saveEvent = callback;
+    this.getElement().querySelector('.event__save-btn').addEventListener('click', this._eventSaveHandler);
   }
 
   _destChangeHandler(evt) {
@@ -236,7 +244,7 @@ export default class EventNew extends SmartView {
 
   _priceChangeHandler(evt) {
     this.updateData({
-      basePrice: evt.target.value,
+      basePrice: parseInt(evt.target.value, 10),
     }, true);
   }
 
@@ -301,16 +309,25 @@ export default class EventNew extends SmartView {
   }
 
   _destroyPickers() {
-    this._flatpickrStart.destroy();
-    this._flatpickrStart = null;
-
-    this._flatpickrEnd.destroy();
-    this._flatpickrEnd = null;
+    if (this._flatpickrStart) {
+      this._flatpickrStart.destroy();
+      this._flatpickrStart = null;
+    }
+    if (this._flatpickrEnd) {
+      this._flatpickrEnd.destroy();
+      this._flatpickrEnd = null;
+    }
   }
 
   restoreHandlers() {
     this._setInnerHandlers();
     this.setCloseNewHandler(this._callback.closeNew);
+    this.setEventSaveHandler(this._callback.saveEvent);
+  }
+
+  removeElement() {
+    this._destroyPickers();
+    super.removeElement();
   }
 
   static parseEventToData(event) {

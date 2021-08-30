@@ -161,6 +161,9 @@ export default class EventEdit extends SmartView {
     this._flatpickrEnd = null;
 
     this._closeEditHandler = this._closeEditHandler.bind(this);
+    this._eventDeleteHandler = this._eventDeleteHandler.bind(this);
+    this._eventSaveHandler = this._eventSaveHandler.bind(this);
+
     this._destChangeHandler = this._destChangeHandler.bind(this);
     this._typeChangeHandler = this._typeChangeHandler.bind(this);
     this._priceChangeHandler = this._priceChangeHandler.bind(this);
@@ -182,8 +185,26 @@ export default class EventEdit extends SmartView {
   setCloseEditHandler(callback) {
     this._callback.closeEdit = callback;
     this.getElement().querySelector('.event__rollup-btn').addEventListener('click', this._closeEditHandler);
-    // TODO: Разделить на разные когда будет сохрание
-    this.getElement().querySelector('.event__save-btn').addEventListener('click', this._closeEditHandler);
+  }
+
+  _eventDeleteHandler(evt) {
+    evt.preventDefault();
+    this._callback.deleteEvent();
+  }
+
+  setEventDeleteHandler(callback) {
+    this._callback.deleteEvent = callback;
+    this.getElement().querySelector('.event__reset-btn').addEventListener('click', this._eventDeleteHandler);
+  }
+
+  _eventSaveHandler(evt) {
+    evt.preventDefault();
+    this._callback.saveEvent(EventEdit.parseDataToEvent(this._data));
+  }
+
+  setEventSaveHandler(callback) {
+    this._callback.saveEvent = callback;
+    this.getElement().querySelector('.event__save-btn').addEventListener('click', this._eventSaveHandler);
   }
 
   _destChangeHandler(evt) {
@@ -199,15 +220,14 @@ export default class EventEdit extends SmartView {
   _typeChangeHandler(evt) {
     this.updateData({
       type: evt.target.value,
-      // FIXME: Исправить когда появятся данные
+
       offers: getOffers(evt, this._offers),
     });
   }
 
-  // TODO: Подумать как реазиловать
   _priceChangeHandler(evt) {
     this.updateData({
-      basePrice: evt.target.value,
+      basePrice: parseInt(evt.target.value, 10),
     }, true);
   }
 
@@ -275,23 +295,33 @@ export default class EventEdit extends SmartView {
     );
   }
 
-  destroyPickers () {
-    this._flatpickrStart.destroy();
-    this._flatpickrStart = null;
-
-    this._flatpickrEnd.destroy();
-    this._flatpickrEnd = null;
+  _destroyPickers() {
+    if (this._flatpickrStart) {
+      this._flatpickrStart.destroy();
+      this._flatpickrStart = null;
+    }
+    if (this._flatpickrEnd) {
+      this._flatpickrEnd.destroy();
+      this._flatpickrEnd = null;
+    }
   }
 
   restoreHandlers() {
     this._setInnerHandlers();
     this.setCloseEditHandler(this._callback.closeEdit);
+    this.setEventDeleteHandler(this._callback.deleteEvent);
+    this.setEventSaveHandler(this._callback.saveEvent);
   }
 
   reset(event) {
     this.updateData(
       EventEdit.parseEventToData(event),
     );
+  }
+
+  removeElement() {
+    super.removeElement();
+    this._destroyPickers();
   }
 
   static parseEventToData(event) {
@@ -303,9 +333,6 @@ export default class EventEdit extends SmartView {
 
   static parseDataToEvent(data) {
     data = Object.assign({}, data);
-
-    delete data.isDueDate;
-    delete data.isRepeating;
 
     return data;
   }

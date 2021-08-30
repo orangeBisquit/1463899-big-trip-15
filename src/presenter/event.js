@@ -3,7 +3,7 @@ import EventEditView from '../view/event-edit.js';
 import { render, replace, RenderPosition, remove } from '../utils/render.js';
 import { isEscPress } from '../utils/common.js';
 import { offers, destinations } from '../mocks/real-data.js';
-import { Mode } from '../utils/const.js';
+import { Mode, UserAction, UpdateType } from '../utils/const.js';
 
 export default class Point {
   constructor(eventsListContainer, handleEventChange, changeMode) {
@@ -18,6 +18,8 @@ export default class Point {
     this._handleHideEditClick = this._handleHideEditClick.bind(this);
     this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
     this._handleFavoriteClick = this._handleFavoriteClick.bind(this);
+    this._handleDeleteClick = this._handleDeleteClick.bind(this);
+    this._handleSaveClick = this._handleSaveClick.bind(this);
   }
 
   init(event) {
@@ -31,6 +33,8 @@ export default class Point {
     this._eventComponent.setOpenEditHandler(this._handleOpenEditClick);
     this._eventEditComponent.setCloseEditHandler(this._handleHideEditClick);
     this._eventComponent.setFavoriteClickHandler(this._handleFavoriteClick);
+    this._eventEditComponent.setEventDeleteHandler(this._handleDeleteClick);
+    this._eventEditComponent.setEventSaveHandler(this._handleSaveClick);
 
     if (prevEventComponent === null || prevEventEditComponent === null) {
       render(this._eventsListContainer, this._eventComponent, RenderPosition.BEFOREEND);
@@ -50,9 +54,9 @@ export default class Point {
   }
 
   destroy() {
-    this._eventEditComponent.destroyPickers();
     remove(this._eventComponent);
     remove(this._eventEditComponent);
+    this._eventEditComponent.removeElement();
   }
 
   resetView() {
@@ -87,19 +91,42 @@ export default class Point {
   }
 
   _handleHideEditClick() {
-    // TODO: Когда появится сохрание - перенести вызов в правильное место
     this._eventEditComponent.reset(this._event);
     this._hideEditEvent();
   }
 
   _handleFavoriteClick() {
     this._changeData(
+      UserAction.UPDATE_EVENT,
+      UpdateType.MINOR,
       Object.assign(
         {},
         this._event,
         {
           isFavorite: !this._event.isFavorite,
         },
+      ),
+    );
+  }
+
+  _handleDeleteClick() {
+    this._changeData(
+      UserAction.DELETE_EVENT,
+      UpdateType.MINOR,
+      Object.assign(
+        {},
+        this._event,
+      ),
+    );
+  }
+
+  _handleSaveClick(update) {
+    this._changeData(
+      UserAction.UPDATE_EVENT,
+      UpdateType.MINOR,
+      Object.assign(
+        {},
+        update,
       ),
     );
   }
