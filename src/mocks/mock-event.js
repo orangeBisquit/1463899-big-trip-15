@@ -8,10 +8,8 @@ import { DESTINATIONS } from './mock-const.js';
 import { generateDateFrom, generateDateTo } from './mock-utils.js';
 import { nanoid } from 'nanoid';
 
-// Путнк назначения
 const generateDestination = () => getRandomArrayItem(DESTINATIONS);
 
-// Объект точки маршрута
 const generateEvent = () => {
   const dateFrom = generateDateFrom();
   const dateTo = generateDateTo(dateFrom);

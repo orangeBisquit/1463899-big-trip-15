@@ -1,5 +1,6 @@
 import AbstractView from './abstract.js';
 import dayjs from 'dayjs';
+import he from 'he';
 import { createDateTemplate } from '../utils/utils.js';
 import { humanizeRouteMessage, humanizeDuration } from '../utils/utils.js';
 
@@ -11,8 +12,7 @@ const createIconTemplate = (type) => (
 
 const createTitleTemplate = (type, destination) => {
   const titleMessage = humanizeRouteMessage(type, destination);
-
-  return `<h3 class="event__title">${titleMessage}</h3>`;
+  return `<h3 class="event__title">${he.encode(titleMessage)}</h3>`;
 };
 
 const createScheduleTemplate = (dateFrom, dateTo) => {
