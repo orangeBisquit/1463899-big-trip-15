@@ -1,13 +1,14 @@
 import EventNewView from '../view/event-new.js';
-import { render, remove, RenderPosition } from '../utils/render.js';
+import { render, remove, RenderPosition, replace } from '../utils/render.js';
 import { isEscPress } from '../utils/common.js';
-import { offers, destinations } from '../mocks/real-data.js';
 import { Mode, UserAction, UpdateType  } from '../utils/const.js';
 
 export default class PointNew {
   constructor(eventsListContainer, handleEventChange) {
     this._eventsListContainer = eventsListContainer;
     this._changeData = handleEventChange;
+    this._offersModel = null;
+    this._destinationsModel = null;
 
     this._eventNewComponent = null;
     this._destroyCallback = null;
@@ -19,10 +20,11 @@ export default class PointNew {
     this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
   }
 
-  init() {
-    this._event = null;
+  init(offersModel, destinationsModel) {
+    this._offersModel = offersModel;
+    this._destinationsModel = destinationsModel;
 
-    this._eventNewComponent = new EventNewView(offers, destinations);
+    this._eventNewComponent = new EventNewView(this._getOffers(), this._getDestinations());
 
     this._eventNewComponent.setCloseNewHandler(this._handleCloseEventNew);
     this._eventNewComponent.setEventSaveHandler(this._handleSaveClick);
@@ -32,6 +34,35 @@ export default class PointNew {
     this.setEscKeyDownHandler();
 
     this._mode = Mode.EDITING;
+  }
+
+  _getOffers() {
+    return this._offersModel.getOffers();
+  }
+
+  _getDestinations() {
+    return this._destinationsModel.getDestinations();
+  }
+
+  setSaving() {
+    this._eventNewComponent.updateData({
+      isDisabled: true,
+      isSaving: true,
+    });
+    replace(this._eventNewComponent, this._eventNewComponent);
+  }
+
+  setAborting() {
+    const resetFormState = () => {
+      this._eventNewComponent.updateData({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false,
+      });
+
+      replace(this._eventNewComponent, this._eventNewComponent);
+    };
+    this._eventNewComponent.shake(resetFormState);
   }
 
   _closeNewEvent () {
@@ -81,6 +112,5 @@ export default class PointNew {
         update,
       ),
     );
-    this.destroy();
   }
 }

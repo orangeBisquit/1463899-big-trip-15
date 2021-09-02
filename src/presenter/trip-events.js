@@ -3,25 +3,31 @@ import EventsListView from '../view/events-list.js';
 import EmptyListView from '../view/empty-list.js';
 import EventPresenter from './event.js';
 import EventNewPresenter from './event-new.js';
+import LoadingView from '../view/loading.js';
 import { remove, render, RenderPosition } from '../utils/render.js';
 import { sortDateDown, sortDurationDown, sortPriceDown, filter } from '../utils/common.js';
-import { SortType, UserAction, UpdateType, FilterType } from '../utils/const.js';
+import { SortType, UserAction, UpdateType, FilterType, FormState } from '../utils/const.js';
 
 export default class TripEvents {
-  constructor(eventsBoard, eventsModel, filterModel) {
-    this._eventsModel = eventsModel;
-    this._filterModel = filterModel;
-
+  constructor(eventsBoard, eventsModel, filterModel, api, offersModel, destinationsModel) {
     this._eventsBoard = eventsBoard;
+    this._eventsModel = eventsModel;
+    this._offersModel = offersModel;
+    this._destinationsModel = destinationsModel;
+    this._filterModel = filterModel;
+    this._api = api;
+
     this._eventPresenter = new Map();
     this._eventNewPresenter = null;
     this._currentSortType = SortType.DEFAULT;
     this._filterType = FilterType.ALL;
+    this._isLoading = true;
 
     this._sortComponent = null;
     this._eventNewComponent = null;
-    this._eventsListComponent = new EventsListView();
     this._emptyList = null;
+    this._eventsListComponent = new EventsListView();
+    this._loadingComponent = new LoadingView();
 
     this._handleEventChange = this._handleEventChange.bind(this);
     this._handleModeChange = this._handleModeChange.bind(this);
@@ -37,8 +43,7 @@ export default class TripEvents {
     render(this._eventsBoard, this._eventsListComponent, RenderPosition.BEFOREEND);
 
     this._renderSort();
-    this._clearAllEvents();
-    this._renderAllEvents();
+    this._renderBoard();
 
     this._eventsModel.addObserver(this._handleModelEvent);
     this._filterModel.addObserver(this._handleModelEvent);
@@ -91,14 +96,38 @@ export default class TripEvents {
 
   _handleViewAction(actionType, updateType, update) {
     switch (actionType) {
+
       case UserAction.UPDATE_EVENT:
-        this._eventsModel.updateEvent(updateType, update);
+        this._eventPresenter.get(update.id).setViewState(FormState.SAVING);
+        this._api.updateEvent(update)
+          .then((response) => {
+            this._eventsModel.updateEvent(updateType, response);
+          }).catch(() => {
+            this._eventPresenter.get(update.id).setViewState(FormState.ABORTING);
+          });
         break;
+
       case UserAction.ADD_EVENT:
-        this._eventsModel.addEvent(updateType, update);
+        this._eventNewComponent.setSaving();
+        this._api.addEvent(update)
+          .then((response) => {
+            this._eventsModel.addEvent(updateType, response);
+            this._eventNewComponent.destroy();
+          })
+          .catch(() => {
+            this._eventNewComponent.setAborting();
+          });
         break;
+
       case UserAction.DELETE_EVENT:
-        this._eventsModel.deleteEvent(updateType, update);
+        this._eventPresenter.get(update.id).setViewState(FormState.DELETING);
+        this._api.deleteEvent(update)
+          .then(() => {
+            this._eventsModel.deleteEvent(updateType, update);
+          })
+          .catch(() => {
+            this._eventPresenter.get(update.id).setViewState(FormState.ABORTING);
+          });
         break;
     }
   }
@@ -108,15 +137,17 @@ export default class TripEvents {
       case UpdateType.PATCH:
         this._eventPresenter.get(data.id).init(data);
         break;
-      // FIXME: Подумать над разницей Minor и Major
       case UpdateType.MINOR:
-        this._clearAllEvents();
-        this._renderAllEvents();
+        this._renderBoard();
         break;
       case UpdateType.MAJOR:
-        this._clearAllEvents();
-        this._renderAllEvents();
+        this._renderBoard();
         this._renderSort();
+        break;
+      case UpdateType.INIT:
+        this._isLoading = false;
+        remove(this._loadingComponent);
+        this._renderBoard();
         break;
     }
   }
@@ -130,9 +161,13 @@ export default class TripEvents {
     this._renderAllEvents();
   }
 
+  _renderLoading() {
+    render(this._eventsBoard, this._loadingComponent, RenderPosition.BEFOREEND);
+  }
+
   _renderEvent(event) {
     const eventPresenter = new EventPresenter(this._eventsListComponent, this._handleViewAction, this._handleModeChange);
-    eventPresenter.init(event);
+    eventPresenter.init(event, this._offersModel, this._destinationsModel);
     this._eventPresenter.set(event.id, eventPresenter);
   }
 
@@ -145,7 +180,15 @@ export default class TripEvents {
     } else {
       this._renderEmptyList();
     }
+  }
 
+  _renderBoard() {
+    if (this._isLoading) {
+      this._renderLoading();
+      return;
+    }
+    this._clearAllEvents();
+    this._renderAllEvents();
   }
 
   _clearAllEvents() {
@@ -169,7 +212,7 @@ export default class TripEvents {
 
     this._eventNewComponent = new EventNewPresenter(this._eventsListComponent, this._handleViewAction);
 
-    this._eventNewComponent.init();
+    this._eventNewComponent.init(this._offersModel, this._destinationsModel);
   }
 
   removeNewEvent() {
@@ -178,12 +221,4 @@ export default class TripEvents {
     }
 
   }
-
-  // _setEventNewListener() {
-  //   const newEventButton = document.querySelector('.trip-main__event-add-btn');
-
-  //   newEventButton.addEventListener('click', () => {
-  //     this._renderNewEvent();
-  //   });
-  // }
 }

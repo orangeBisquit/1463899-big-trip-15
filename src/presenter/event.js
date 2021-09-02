@@ -2,12 +2,13 @@ import EventView from '../view/event.js';
 import EventEditView from '../view/event-edit.js';
 import { render, replace, RenderPosition, remove } from '../utils/render.js';
 import { isEscPress } from '../utils/common.js';
-import { offers, destinations } from '../mocks/real-data.js';
-import { Mode, UserAction, UpdateType } from '../utils/const.js';
+import { Mode, UserAction, UpdateType, FormState } from '../utils/const.js';
 
 export default class Point {
   constructor(eventsListContainer, handleEventChange, changeMode) {
     this._eventsListContainer = eventsListContainer;
+    this._offersModel = null;
+    this._destinationsModel = null;
     this._changeData = handleEventChange;
     this._changeMode = changeMode;
     this._eventComponent = null;
@@ -22,13 +23,16 @@ export default class Point {
     this._handleSaveClick = this._handleSaveClick.bind(this);
   }
 
-  init(event) {
+  init(event, offersModel, destinationsModel) {
     this._event = event;
+    this._offersModel = offersModel;
+    this._destinationsModel = destinationsModel;
+
     const prevEventComponent = this._eventComponent;
     const prevEventEditComponent = this._eventEditComponent;
 
     this._eventComponent = new EventView(event);
-    this._eventEditComponent = new EventEditView(event, offers, destinations);
+    this._eventEditComponent = new EventEditView(event, this._getOffers(), this._getDestinations());
 
     this._eventComponent.setOpenEditHandler(this._handleOpenEditClick);
     this._eventEditComponent.setCloseEditHandler(this._handleHideEditClick);
@@ -51,6 +55,45 @@ export default class Point {
 
     remove(prevEventComponent);
     remove(prevEventEditComponent);
+  }
+
+  _getOffers() {
+    return this._offersModel.getOffers();
+  }
+
+  _getDestinations() {
+    return this._destinationsModel.getDestinations();
+  }
+
+  setViewState(state) {
+
+    const resetFormState = () => {
+      this._eventEditComponent.updateData({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false,
+      });
+    };
+
+    switch (state) {
+      case FormState.SAVING:
+        this._eventEditComponent.updateData({
+          isDisabled: true,
+          isSaving: true,
+        });
+        replace(this._eventEditComponent, this._eventEditComponent);
+        break;
+      case FormState.DELETING:
+        this._eventEditComponent.updateData({
+          isDisabled: true,
+          isDeleting: true,
+        });
+        replace(this._eventEditComponent, this._eventEditComponent);
+        break;
+      case FormState.ABORTING:
+        this._eventEditComponent.shake(resetFormState);
+        break;
+    }
   }
 
   destroy() {

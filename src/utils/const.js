@@ -31,6 +31,7 @@ const UpdateType = {
   PATCH: 'PATCH',
   MINOR: 'MINOR',
   MAJOR: 'MAJOR',
+  INIT: 'INIT',
 };
 
 const MenuItem = {
@@ -39,7 +40,13 @@ const MenuItem = {
   STATS: 'stats',
 };
 
+const FormState = {
+  SAVING: 'SAVING',
+  DELETING: 'DELETING',
+  ABORTING: 'ABORTING',
+};
+
 
 const TypeColors = ['#158DEB', '#FFD054'];
 
-export { SortType, Mode, FilterType, FLATPICKER_SETUP, UserAction, UpdateType, MenuItem, TypeColors };
+export { SortType, Mode, FilterType, FLATPICKER_SETUP, UserAction, UpdateType, MenuItem, TypeColors, FormState };
