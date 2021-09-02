@@ -1,6 +1,5 @@
 import dayjs from 'dayjs';
 import { FilterType } from './const.js';
-import { points } from '../mocks/real-data.js';
 
 const getUniqueTypes = (events) => {
   const uniqueTypes = new Set();
@@ -54,11 +53,9 @@ const calculateTypeTime = (events) => {
 
   return uniqueTypesTimeOrdered;
 };
-calculateTypeTime(points);
 
 const capitalizeFirstLetter = (string) => string.charAt(0).toUpperCase() + string.slice(1);
 
-// FIXME: Переписать функция по техзаданию (начала первого, окончание последнего), связать с презентором чтобы слушать изменения ивентов
 const sortByDate = (events) => {
   const eventsByDay = events.slice().sort((a, b) => a.dateFrom - b.dateFrom);
 

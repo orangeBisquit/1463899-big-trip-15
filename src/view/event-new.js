@@ -1,25 +1,42 @@
 import SmartView from './smart.js';
 import dayjs from 'dayjs';
-import { nanoid } from 'nanoid';
 import flatpickr from 'flatpickr';
 import { FLATPICKER_SETUP } from '../utils/const.js';
 import { capitalizeFirstLetter } from '../utils/common.js';
 
 const createDateTemplate = (dateFrom, format) => dayjs(dateFrom).format(format);
 
-const getOffers = (evt, offers) => {
-  const type = offers.find((item) => item.type === evt.target.value);
-  return type && type.offers ? type.offers : null;
+const getOffersValues = () => {
+  const checkedOffers = Array.from(document.querySelectorAll('.event__offer-checkbox:checked'));
+  const checkedOffersValues = checkedOffers.map((offer) => ({
+    title: offer.dataset.title,
+    price: parseInt(offer.dataset.price, 10),
+  }));
+
+  return checkedOffersValues;
 };
 
-const createOffersSelection = (allOffers, type) => {
-  const offers = allOffers.find((item) => item.type === type).offers;
+const getAvailableOffers = (currentType, allOffers) => {
+  const offers = allOffers.filter((curentOffer) => curentOffer.type === currentType);
 
-  const offerItems = offers ? offers.map((offer) => {
+  let [currentOfferType] = offers;
+  currentOfferType = currentOfferType.offers;
+
+  return currentOfferType;
+};
+
+const createOffers = (allOffers, checkedOffers, type) => {
+  const currentOffers = getAvailableOffers(type, allOffers);
+
+  const offers = currentOffers ? currentOffers.map((offer) => {
+
     const offerClass = offer.title.slice().toLowerCase().split(' ').join('-');
+    const checkedOfferss = checkedOffers.map((item) => item.title);
+
+    const isOfferChecked = checkedOfferss.includes(offer.title);
 
     return `<div class="event__offer-selector">
-      <input class="event__offer-checkbox  visually-hidden" id="event-offer-luggage__${offerClass}" type="checkbox" name="event-offer-luggage">
+      <input class="event__offer-checkbox  visually-hidden" id="event-offer-luggage__${offerClass}" type="checkbox" name="event-offer-luggage" value="${offerClass}" data-title="${offer.title}" data-price="${offer.price}" ${isOfferChecked ? 'checked' : ''}>
       <label class="event__offer-label" for="event-offer-luggage__${offerClass}">
       <span class="event__offer-title">${offer.title}</span>
                           &plus;&euro;&nbsp;
@@ -28,15 +45,14 @@ const createOffersSelection = (allOffers, type) => {
     </div>`;
   }).join('\n') : '';
 
-  // console.log(offerItems);
-
-  return offerItems ? `<section class="event__section  event__section--offers">
+  return offers ? `<section class="event__section  event__section--offers">
               <h3 class="event__section-title  event__section-title--offers">Offers</h3>
               <div class="event__available-offers">
-                ${offerItems}
+                ${offers}
               </div>
           </section>` : '';
 };
+
 
 const getDescription = (evt, destinations) => {
   const destination = destinations.find((item) => item.name === evt.target.value);
@@ -80,8 +96,8 @@ const createTypes = (offers, checkedType) => offers.map((offer) => {
 }).join('\n');
 
 const generateNewEvent = () => {
-  const dateFrom = dayjs();
-  const dateTo = dayjs();
+  const dateFrom = new Date();
+  const dateTo = new Date();
 
   return {
     basePrice: 0,
@@ -92,24 +108,8 @@ const generateNewEvent = () => {
       name: '',
       pictures: '',
     },
-    id: nanoid(),
-    isFavorite: '',
-    offers: [{
-      'title': 'Upgrade to a business class',
-      'price': 190,
-    }, {
-      'title': 'Choose the radio station',
-      'price': 30,
-    }, {
-      'title': 'Choose temperature',
-      'price': 170,
-    }, {
-      'title': 'Drive quickly, I\'m in a hurry',
-      'price': 100,
-    }, {
-      'title': 'Drive slowly',
-      'price': 110,
-    }],
+    isFavorite: false,
+    offers: [],
     type: 'taxi',
   };
 };
@@ -121,6 +121,9 @@ const createNewEvent = (event, availableOffers, destinations) => {
     basePrice,
     destination,
     type,
+    isDisabled,
+    isSaving,
+    offers,
   } = event;
 
   const { description, name: destinationName, pictures: photos } = destination;
@@ -147,16 +150,16 @@ const createNewEvent = (event, availableOffers, destinations) => {
                   <label class="event__label  event__type-output" for="event-destination-1">
                       ${type}
                     </label>
-                  <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destinationName}" list="destination-list-1">
+                  <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destinationName}" list="destination-list-1" ${isDisabled ? 'disabled' : ''}>
                   ${createDestinationsList(destinations)}
                 </div>
 
                 <div class="event__field-group  event__field-group--time">
                   <label class="visually-hidden" for="event-start-time-1">From</label>
-                  <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${createDateTemplate(dateFrom, 'DD/MM/YY HH:MM')}">
+                  <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${createDateTemplate(dateFrom, 'DD/MM/YY HH:MM')}" ${isDisabled ? 'disabled' : ''}>
                     &mdash;
                   <label class="visually-hidden" for="event-end-time-1">To</label>
-                  <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${createDateTemplate(dateTo, 'DD/MM/YY HH:MM')}">
+                  <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${createDateTemplate(dateTo, 'DD/MM/YY HH:MM')}" ${isDisabled ? 'disabled' : ''}>
                   </div>
 
                 <div class="event__field-group  event__field-group--price">
@@ -164,14 +167,14 @@ const createNewEvent = (event, availableOffers, destinations) => {
                     <span class="visually-hidden">Price</span>
                       &euro;
                   </label>
-                  <input class="event__input  event__input--price" id="event-price-1" type="number" name="event-price" value="${basePrice}">
+                  <input class="event__input  event__input--price" id="event-price-1" type="number" name="event-price" value="${basePrice}" ${isDisabled ? 'disabled' : ''}>
                 </div>
 
-                <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-                <button class="event__reset-btn" type="reset">Cancel</button>
+                <button class="event__save-btn  btn  btn--blue" type="submit" ${isDisabled ? 'disabled' : ''}>${isSaving ? 'Saving...' : 'Save'}</button>
+                <button class="event__reset-btn" type="reset" ${isDisabled ? 'disabled' : ''}>Cancel</button>
               </header>
             <section class="event__details">
-            ${createOffersSelection(availableOffers, type)}
+            ${createOffers(availableOffers, offers, type)}
             ${createDestination(description, photos)}
           </section>
         </form>
@@ -193,6 +196,7 @@ export default class EventNew extends SmartView {
     this._destChangeHandler = this._destChangeHandler.bind(this);
     this._typeChangeHandler = this._typeChangeHandler.bind(this);
     this._priceChangeHandler = this._priceChangeHandler.bind(this);
+    this._offerChangeHandler = this._offerChangeHandler.bind(this);
     this._dateFromChangeHandler = this._dateFromChangeHandler.bind(this);
     this._dateToChangeHandler = this._dateToChangeHandler.bind(this);
 
@@ -237,14 +241,19 @@ export default class EventNew extends SmartView {
   _typeChangeHandler(evt) {
     this.updateData({
       type: evt.target.value,
-      // FIXME: Исправить когда появятся данные
-      offers: getOffers(evt, this._offers),
+      offers: [],
     });
   }
 
   _priceChangeHandler(evt) {
     this.updateData({
       basePrice: parseInt(evt.target.value, 10),
+    }, true);
+  }
+
+  _offerChangeHandler() {
+    this.updateData({
+      offers: getOffersValues(),
     }, true);
   }
 
@@ -260,12 +269,14 @@ export default class EventNew extends SmartView {
     });
   }
 
-  // TODO: Добавить offerChangeHandler когда будут данные
-
   _setInnerHandlers() {
     this.getElement().querySelector('.event__input--destination').addEventListener('change', this._destChangeHandler);
     this.getElement().querySelector('.event__type-group').addEventListener('change', this._typeChangeHandler);
     this.getElement().querySelector('.event__input--price').addEventListener('change', this._priceChangeHandler);
+    const availableOffers = this.getElement().querySelector('.event__available-offers');
+    if (availableOffers) {
+      availableOffers.addEventListener('change', this._offerChangeHandler);
+    }
     this._setFlatpickrStart();
     this._setFlatpickrEnd();
   }
@@ -334,11 +345,18 @@ export default class EventNew extends SmartView {
     return Object.assign(
       {},
       event,
+      {
+        isDisabled: false,
+        isSaving: false,
+      },
     );
   }
 
   static parseDataToEvent(data) {
     data = Object.assign({}, data);
+
+    delete data.isDisabled;
+    delete data.isSaving;
 
     return data;
   }

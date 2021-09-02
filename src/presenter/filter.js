@@ -4,7 +4,6 @@ import { render, replace, remove, RenderPosition } from '../utils/render.js';
 
 export default class Filter {
   constructor(filterContainer, filterModel, eventsModel) {
-    // FIXME: Не уверен что querySelector тут уместен, возможно стоит находить сразу в main.js
     this._filterContainer = filterContainer.querySelector('.trip-controls__filters');
     this._filterModel = filterModel;
     this._eventsModel = eventsModel;
