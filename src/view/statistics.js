@@ -1,9 +1,9 @@
-import SmartView from './smart.js';
+import SmartView from './smart';
 import Chart from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
-import { calculateTypeCost, calculateTypeCount, calculateTypeTime } from '../utils/common.js';
-import { TypeColors } from '../utils/const.js';
-import { humanizeDuration } from '../utils/utils.js';
+import { calculateTypeCost, calculateTypeCount, calculateTypeTime } from '../utils/common';
+import { TypeColors } from '../utils/const';
+import { humanizeDuration } from '../utils/utils';
 
 const BAR_HEIGHT = 55;
 

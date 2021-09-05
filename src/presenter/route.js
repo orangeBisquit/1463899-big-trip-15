@@ -1,6 +1,6 @@
-import { render, remove, RenderPosition } from '../utils/render.js';
-import RouteView from '../view/route.js';
-import PriceView from '../view/price.js';
+import { render, remove, RenderPosition } from '../utils/render';
+import RouteView from '../view/route';
+import PriceView from '../view/price';
 
 export default class Route {
   constructor(routeBoard, eventsModel) {

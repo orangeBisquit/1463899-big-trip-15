@@ -1,12 +1,12 @@
-import SortView from '../view/sort.js';
-import EventsListView from '../view/events-list.js';
-import EmptyListView from '../view/empty-list.js';
-import EventPresenter from './event.js';
-import EventNewPresenter from './event-new.js';
-import LoadingView from '../view/loading.js';
-import { remove, render, RenderPosition } from '../utils/render.js';
-import { sortDateDown, sortDurationDown, sortPriceDown, filter } from '../utils/common.js';
-import { SortType, UserAction, UpdateType, FilterType, FormState } from '../utils/const.js';
+import SortView from '../view/sort';
+import EventsListView from '../view/events-list';
+import EmptyListView from '../view/empty-list';
+import EventPresenter from './event';
+import EventNewPresenter from './event-new';
+import LoadingView from '../view/loading';
+import { remove, render, RenderPosition } from '../utils/render';
+import { sortDateDown, sortDurationDown, sortPriceDown, filter } from '../utils/common';
+import { SortType, UserAction, UpdateType, FilterType, FormState } from '../utils/const';
 
 export default class TripEvents {
   constructor(eventsBoard, eventsModel, filterModel, api, offersModel, destinationsModel) {

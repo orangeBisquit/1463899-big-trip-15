@@ -1,5 +1,5 @@
-import AbstractView from './abstract.js';
-import { MenuItem } from '../utils/const.js';
+import AbstractView from './abstract';
+import { MenuItem } from '../utils/const';
 
 const createMenu = () => (
   `<nav class="trip-controls__trip-tabs  trip-tabs">

@@ -1,8 +1,8 @@
-import SmartView from './smart.js';
+import SmartView from './smart';
 import dayjs from 'dayjs';
 import flatpickr from 'flatpickr';
-import { FLATPICKER_SETUP } from '../utils/const.js';
-import { capitalizeFirstLetter } from '../utils/common.js';
+import { FLATPICKER_SETUP } from '../utils/const';
+import { capitalizeFirstLetter } from '../utils/common';
 
 const createDateTemplate = (dateFrom, format) => dayjs(dateFrom).format(format);
 

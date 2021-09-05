@@ -1,8 +1,8 @@
-import EventView from '../view/event.js';
-import EventEditView from '../view/event-edit.js';
-import { render, replace, RenderPosition, remove } from '../utils/render.js';
-import { isEscPress } from '../utils/common.js';
-import { Mode, UserAction, UpdateType, FormState } from '../utils/const.js';
+import EventView from '../view/event';
+import EventEditView from '../view/event-edit';
+import { render, replace, RenderPosition, remove } from '../utils/render';
+import { isEscPress } from '../utils/common';
+import { Mode, UserAction, UpdateType, FormState } from '../utils/const';
 
 export default class Point {
   constructor(eventsListContainer, handleEventChange, changeMode) {
@@ -116,6 +116,7 @@ export default class Point {
   }
 
   _hideEditEvent() {
+    this._eventEditComponent.reset(this._event);
     replace(this._eventComponent, this._eventEditComponent);
     document.removeEventListener('keydown', this._escKeyDownHandler);
     this._mode = Mode.DEFAULT;

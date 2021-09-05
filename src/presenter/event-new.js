@@ -1,7 +1,7 @@
-import EventNewView from '../view/event-new.js';
-import { render, remove, RenderPosition, replace } from '../utils/render.js';
-import { isEscPress } from '../utils/common.js';
-import { Mode, UserAction, UpdateType  } from '../utils/const.js';
+import EventNewView from '../view/event-new';
+import { render, remove, RenderPosition, replace } from '../utils/render';
+import { isEscPress } from '../utils/common';
+import { Mode, UserAction, UpdateType  } from '../utils/const';
 
 export default class PointNew {
   constructor(eventsListContainer, handleEventChange) {

@@ -1,5 +1,5 @@
-import AbstractView from './abstract.js';
-import { capitalizeFirstLetter } from '../utils/common.js';
+import AbstractView from './abstract';
+import { capitalizeFirstLetter } from '../utils/common';
 
 const createFilter = (filter, activeFilter) => `<div class="trip-filters__filter">
         <input id="filter-${filter}" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" value="${filter}" ${filter === activeFilter ? 'checked' : ''}>

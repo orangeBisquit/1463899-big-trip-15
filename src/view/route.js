@@ -1,6 +1,6 @@
-import AbstractView from './abstract.js';
-import { sortByDate } from '../utils/common.js';
-import { createDateTemplate } from '../utils/utils.js';
+import AbstractView from './abstract';
+import { sortByDate } from '../utils/common';
+import { createDateTemplate } from '../utils/utils';
 
 const showStartEndEvents = (sortedEvents) => {
   const startEventName = sortedEvents[0].destination.name;

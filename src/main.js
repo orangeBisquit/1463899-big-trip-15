@@ -13,8 +13,8 @@ import StatisticsView from './view/statistics.js';
 import Api from './api/api.js';
 import { UpdateType } from './utils/const.js';
 
-const AUTHORIZATION = 'Basic hS2thsdfSwco11k9j';
-const END_POINT = 'https://15.ecmascript.pages.academy/big-trip';
+const AUTHORIZATION = 'Basic zugW_STsXXdGQbJkzzzOt';
+const END_POINT = 'https://14.ecmascript.pages.academy/big-trip';
 
 const routeElement = document.querySelector('.trip-main');
 const eventsElement = document.querySelector('.trip-events');

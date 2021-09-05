@@ -1,5 +1,5 @@
-import AbstractView from './abstract.js';
-import { calculatePrice } from '../utils/common.js';
+import AbstractView from './abstract';
+import { calculatePrice } from '../utils/common';
 
 const createPrice = (price) =>
   `<p class="trip-info__cost">

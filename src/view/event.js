@@ -1,8 +1,8 @@
-import AbstractView from './abstract.js';
+import AbstractView from './abstract';
 import dayjs from 'dayjs';
 import he from 'he';
-import { createDateTemplate } from '../utils/utils.js';
-import { humanizeRouteMessage, humanizeDuration } from '../utils/utils.js';
+import { createDateTemplate } from '../utils/utils';
+import { humanizeRouteMessage, humanizeDuration } from '../utils/utils';
 
 const createIconTemplate = (type) => (
   `<div class="event__type">
