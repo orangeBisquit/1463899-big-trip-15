@@ -3,7 +3,7 @@ import { render, remove, RenderPosition, replace } from '../utils/render';
 import { isEscPress } from '../utils/common';
 import { Mode, UserAction, UpdateType  } from '../utils/const';
 
-export default class PointNew {
+export default class EventNew {
   constructor(eventsListContainer, handleEventChange) {
     this._eventsListContainer = eventsListContainer;
     this._changeData = handleEventChange;

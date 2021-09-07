@@ -1,4 +1,4 @@
-import AbstractObserver from './points-observer';
+import AbstractObserver from './abstract-observer';
 
 export default class Events extends AbstractObserver {
   constructor() {

@@ -1,6 +1,6 @@
-import AbstractObserver from './points-observer';
+import AbstractObserver from './abstract-observer';
 
-export default class Offer extends AbstractObserver {
+export default class Offers extends AbstractObserver {
   constructor() {
     super();
     this._offers = null;

@@ -4,7 +4,7 @@ import { render, replace, RenderPosition, remove } from '../utils/render';
 import { isEscPress } from '../utils/common';
 import { Mode, UserAction, UpdateType, FormState } from '../utils/const';
 
-export default class Point {
+export default class Event {
   constructor(eventsListContainer, handleEventChange, changeMode) {
     this._eventsListContainer = eventsListContainer;
     this._offersModel = null;

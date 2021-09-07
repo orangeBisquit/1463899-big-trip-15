@@ -14,13 +14,7 @@ const renderMoneyChart = (moneyCtx, events) => {
   const eventTypesCost = calculateTypeCost(events);
   const typeLabels = [...eventTypesCost.keys()];
   const typeValues = [...eventTypesCost.values()];
-  const typeColors = typeLabels.map((item, index) => {
-    if (index % 2 === 0) {
-      return TypeColors[0];
-    } else {
-      return TypeColors[1];
-    }
-  });
+  const typeColors = typeLabels.map((item, index) => index % 2 === 0 ? TypeColors[0] : TypeColors[1]);
 
   const moneyChart = new Chart(moneyCtx, {
     plugins: [ChartDataLabels],
@@ -94,13 +88,7 @@ const renderTypeChart = (typeCtx, events) => {
   const eventTypesCount = calculateTypeCount(events);
   const typeLabels = [...eventTypesCount.keys()];
   const typeValues = [...eventTypesCount.values()];
-  const typeColors = typeLabels.map((item, index) => {
-    if (index % 2 === 0) {
-      return TypeColors[0];
-    } else {
-      return TypeColors[1];
-    }
-  });
+  const typeColors = typeLabels.map((item, index) => index % 2 === 0 ? TypeColors[0] : TypeColors[1]);
 
   const typeChart = new Chart(typeCtx, {
     plugins: [ChartDataLabels],
@@ -174,13 +162,7 @@ const renderTimeChart = (timeCtx, events) => {
   const eventTypesTime = calculateTypeTime(events);
   const typeLabels = [...eventTypesTime.keys()];
   const typeValues = [...eventTypesTime.values()];
-  const typeColors = typeLabels.map((item, index) => {
-    if (index % 2 === 0) {
-      return TypeColors[0];
-    } else {
-      return TypeColors[1];
-    }
-  });
+  const typeColors = typeLabels.map((item, index) => index % 2 === 0 ? TypeColors[0] : TypeColors[1]);
 
   const timeChart = new Chart(timeCtx, {
     plugins: [ChartDataLabels],

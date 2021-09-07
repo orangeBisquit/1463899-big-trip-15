@@ -84,20 +84,6 @@ const isEscPress = (evt) => {
   }
 };
 
-const updateItem = (items, update) => {
-  const index = items.findIndex((item) => item.id === update.id);
-
-  if (index === -1) {
-    return items;
-  }
-
-  return [
-    ...items.slice(0, index),
-    update,
-    ...items.slice(index + 1),
-  ];
-};
-
 const getEventDuration = (start, end) => dayjs(start).diff(dayjs(end));
 
 const sortDateDown = (eventA, eventB) => eventA.dateFrom - eventB.dateFrom;
@@ -124,5 +110,5 @@ const filter = {
 };
 
 
-export { capitalizeFirstLetter, sortByDate, calculatePrice, isEscPress, updateItem, sortDateDown, sortDurationDown, sortPriceDown, filter, calculateTypeCost, calculateTypeCount, calculateTypeTime};
+export { capitalizeFirstLetter, sortByDate, calculatePrice, isEscPress, sortDateDown, sortDurationDown, sortPriceDown, filter, calculateTypeCost, calculateTypeCount, calculateTypeTime};
 
